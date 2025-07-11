@@ -1,0 +1,8 @@
+.cache
+build
+backup
+.vscode
+demo
+compile_commands.json
+third_party
+tmp
