@@ -2,6 +2,7 @@
 #include <c10/core/ScalarType.h>
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 
 using namespace torch;
@@ -110,6 +111,7 @@ void set_diag(torch::Tensor &tensor, float value) {
 }
 
 // Detects cell collisions in minibatch, where groups/minibatches of cells are checked
+// if two cells are colliding, both of them will be deleted
 // Inputs:
 // cell_pos: Tensor of points in 3D space [N, 3]
 // Outputs:
@@ -119,11 +121,13 @@ Tensor cells::check_all_collision_minibatch(const Tensor &cell_pos, const float 
     assert(cell_pos.dim() == 2 && cell_pos.size(1) == 3);
 
     float step = (4.0f / 3.0f) * M_PI * sphere_rad * sphere_rad * sphere_rad * TARGET_DENSITY / cell_pos.size(0);
+    std::cout << "step: " << step << std::endl;
     float cube_size = 2.05f * neuron_rad * 1.1f + step;
+    std::cout << "cube_size: " << cube_size << std::endl;
 
     Tensor mask = torch::ones({cell_pos.size(0)}, opts).to(torch::kBool); // [N]
     Tensor pivots = generate_pivot_tensor(sphere_rad, step);              // [N, 3]
-
+    std::cout << "pivots: " << pivots << std::endl;                       // should be [M, 3]
     for (int i = 0; i < pivots.size(0); ++i) {
         Tensor indices_cur = find_in_cube(cell_pos, pivots[i], cube_size);
         if (indices_cur.size(0) < 2) {
@@ -156,4 +160,11 @@ Tensor cells::generate_pivot_tensor(float sphere_rad, float step) const {
     torch::Tensor pivots = torch::stack({grid_x, grid_y, grid_z}, 3).reshape({-1, 3}); // [S³, 3]
 
     return pivots;
+}
+
+std::pair<torch::Tensor, torch::Tensor> cells::split_into_glia_neuron(const float ratio, const torch::Tensor &cell_pos) {
+    int64_t split_idx = static_cast<int64_t>(cell_pos.size(0) * ratio);
+    Tensor neuron_pos = cell_pos.index({torch::indexing::Slice(0, split_idx)});
+    Tensor glia_pos = cell_pos.index({torch::indexing::Slice(split_idx, cell_pos.size(0))});
+    return {neuron_pos, glia_pos};
 }

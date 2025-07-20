@@ -10,7 +10,8 @@ foreach(test_src ${TEST_SOURCES})
     # 链接项目代码库 + Catch2 + LibTorch
     target_link_libraries(${test_name}
         PRIVATE
-            cells                      # 你自己的 target
+            cells                      
+            dataloader
             Catch2::Catch2WithMain    # 提供 main() 和 Catch2 实现
             ${TORCH_LIBRARIES}
     )

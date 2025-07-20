@@ -4,7 +4,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 cells c;
-
 auto opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCPU);
 TEST_CASE("test_sphere_even", "[sphere]") {
 
@@ -60,4 +59,25 @@ TEST_CASE("generate_pivots", "[generate_pivot_tensor]") {
     REQUIRE(pivots.size(1) == 3);
 
     // std::cout << "pivots: " << pivots << std::endl;
+}
+
+TEST_CASE("test_check_all_collision_minibatch", "[check_all_collision_minibatch]") {
+    auto range = torch::arange(-1, 2, opts);
+    auto grids = torch::meshgrid({range, range, range}, "ij");
+    auto grid = torch::stack(grids, -1).reshape({-1, 3});
+    auto one_more = torch::tensor({{0.5, 0.5, 0.5}}, opts);
+    grid = torch::cat({grid, one_more}, 0); // Add one more point to test collision
+
+    torch::Tensor result = c.check_all_collision_minibatch(grid, 1.0f, 0.9f);
+    std::cout << "result: " << result << std::endl;
+}
+
+TEST_CASE("split 9 neurons", "[split_into_glia_neuron]") {
+    auto points = torch::arange(27, opts).reshape({9, 3});
+    auto [neuron_pos, glia_pos] = c.split_into_glia_neuron(0.5f, points);
+
+    REQUIRE(neuron_pos.size(0) == 4);
+    REQUIRE(glia_pos.size(0) == 5);
+    std::cout << "neuron_pos: " << neuron_pos << std::endl;
+    std::cout << "glia_pos: " << glia_pos << std::endl;
 }

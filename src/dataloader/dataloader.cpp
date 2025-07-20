@@ -5,31 +5,24 @@
 #include <torch/torch.h>
 #include <vector>
 
-// Load a CSV file into a torch tensor (float32)
-torch::Tensor load_csv2tensor(const std::string &file_path) {
+std::vector<float> load_csv_to_vector(const std::string &file_path, const char &delimiter) {
+
     std::ifstream file(file_path);
-    std::string line, cell;
-    std::vector<float> values;
-    size_t num_rows = 0;
-    size_t num_cols = 0;
-
+    std::vector<float> data;
+    std::string line;
     while (std::getline(file, line)) {
-        std::stringstream lineStream(line);
-        size_t current_cols = 0;
-
-        while (std::getline(lineStream, cell, ',')) {
-            values.push_back(std::stof(cell));
-            ++current_cols;
+        std::stringstream line_stream(line);
+        std::string value;
+        while (std::getline(line_stream, value, delimiter)) {
+            data.push_back(std::stof(value));
         }
-
-        if (num_cols == 0) {
-            num_cols = current_cols;
-        } else if (current_cols != num_cols) {
-            throw std::runtime_error("Inconsistent number of columns in CSV file.");
-        }
-
-        ++num_rows;
     }
+    return data;
+}
 
-    return torch::from_blob(values.data(), {static_cast<long>(num_rows), static_cast<long>(num_cols)}, torch::kFloat32).clone();
+// Load a CSV file into a torch tensor (float32)
+torch::Tensor load_csv_to_tensor(const std::string &file_path, const char &delimiter, const torch::TensorOptions &ops) {
+    std::vector<float> data = load_csv_to_vector(file_path, delimiter);
+    auto tensor = torch::from_blob(data.data(), {static_cast<long>(data.size())}, ops);
+    return tensor.clone(); // Clone to ensure the tensor is not referencing the original data
 }

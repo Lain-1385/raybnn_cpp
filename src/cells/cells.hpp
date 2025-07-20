@@ -21,4 +21,6 @@ public:
     torch::Tensor check_all_collision_minibatch(const torch::Tensor &cell_pos, const float sphere_rad, const float neuron_rad) const;
 
     torch::Tensor generate_pivot_tensor(float sphere_rad, float step) const;
+
+    std::pair<torch::Tensor, torch::Tensor> split_into_glia_neuron(const float ratio, const torch::Tensor &cell_pos);
 };
