@@ -30,4 +30,5 @@ public:
     void raytrace3();
     std::pair<torch::Tensor, torch::Tensor>
     filter_rays(const float con_rad, torch::Tensor &target_pos, torch::Tensor &input_pos, torch::Tensor &input_idx);
+    torch::Tensor rays_from_neuronsA_to_neuronsB(const float con_rad, const torch::Tensor &pos_A, const torch::Tensor &pos_B);
 };
