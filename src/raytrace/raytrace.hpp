@@ -28,7 +28,10 @@ private:
 
 public:
     void raytrace3();
-    std::pair<torch::Tensor, torch::Tensor>
+    static std::pair<torch::Tensor, torch::Tensor>
     filter_rays(const float con_rad, torch::Tensor &target_pos, torch::Tensor &input_pos, torch::Tensor &input_idx);
-    torch::Tensor rays_from_neuronsA_to_neuronsB(const float con_rad, const torch::Tensor &pos_A, const torch::Tensor &pos_B);
+    static torch::Tensor rays_from_neuronsA_to_neuronsB(const float con_rad, const torch::Tensor &pos_A, const torch::Tensor &pos_B);
+
+    static torch::Tensor
+    line_sphere_intersect(const torch::Tensor &line_start, const torch::Tensor &line_end, const torch::Tensor &block_cells, const float block_radius);
 };
