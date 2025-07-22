@@ -32,6 +32,17 @@ public:
     filter_rays(const float con_rad, torch::Tensor &target_pos, torch::Tensor &input_pos, torch::Tensor &input_idx);
     static torch::Tensor rays_from_neuronsA_to_neuronsB(const float con_rad, const torch::Tensor &pos_A, const torch::Tensor &pos_B);
 
-    static torch::Tensor
-    line_sphere_intersect(const torch::Tensor &line_start, const torch::Tensor &line_end, const torch::Tensor &block_cells, const float block_radius);
+    static torch::Tensor line_sphere_intersect(const torch::Tensor &line_start,
+                                               const torch::Tensor &line_end,
+                                               const torch::Tensor &block_cells,
+                                               const torch::Tensor &block_radius);
+
+    static void line_sphere_intersect_batch(const int64_t batch_size,
+                                            const int64_t max_allowed_hits,
+                                            const torch::Tensor &block_cells,
+                                            const torch::Tensor &block_radius,
+                                            torch::Tensor &line_start,
+                                            torch::Tensor &line_end,
+                                            torch::Tensor &index_start,
+                                            torch::Tensor &index_end);
 };
