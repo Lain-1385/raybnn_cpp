@@ -114,3 +114,12 @@ void raytrace::line_sphere_intersect_batch(const int64_t batch_size,
     index_start = index_start.index({valid_hits});
     index_end = index_end.index({valid_hits});
 }
+
+// WRowIdx [N]
+// WColIdx [N]
+inline Tensor dedup_and_sort(torch::Tensor WRowIdx, torch::Tensor WColIdx) {
+    torch::Tensor indices = torch::stack({WRowIdx, WColIdx}, 1);
+    // WARNING:my libtorch has no unique function, so we use torch::_unique
+    auto [unique_indices, _] = torch::_unique(indices, true, false);
+    return unique_indices;
+}
