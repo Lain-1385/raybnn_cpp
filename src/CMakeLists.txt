@@ -1,3 +1,6 @@
 add_subdirectory(cells)
 add_subdirectory(dataloader)
 add_subdirectory(raytrace)
+add_subdirectory(graph)
+add_subdirectory(sparse)
+add_subdirectory(utility)

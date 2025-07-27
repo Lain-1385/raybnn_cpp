@@ -1,6 +1,5 @@
 add_library(raytrace STATIC
     raytrace.cpp
-    
 )
 
 target_include_directories(raytrace PUBLIC
