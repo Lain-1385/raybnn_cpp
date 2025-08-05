@@ -1,3 +1,4 @@
+#ifdef USE_CUDA
 #include "utility.hpp"
 
 torch::Tensor make_tensor_from_buffer(size_t num_elements) {
@@ -14,3 +15,4 @@ torch::Tensor make_tensor_from_buffer(size_t num_elements) {
 
     return tensor;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef USE_CUDA
 #pragma once
 #include <c10/cuda/CUDACachingAllocator.h>
 #include <memory>
@@ -46,3 +47,5 @@ private:
     size_t bytes_;
     void *ptr_;
 };
+
+#endif
